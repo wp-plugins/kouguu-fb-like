@@ -3,7 +3,7 @@
 Plugin Name: Kouguu FB Like
 Plugin URI: http://www.kouguu.net
 Description: Kouguu Facebook Like Button Plugin
-Version: 1.0.1
+Version: 2.0
 Author: Nicolas Zimmer
 Author URI: http://www.kouguu.net
 */
@@ -27,8 +27,10 @@ try {
 
 // Constants
     define('KOUGUU_DEBUG',false);
-    define('KOUGUU_VERSION',"1.0");
-    define('KOUGUU_APP',"Kouguu FB Like");
+    define('KOUGUU_VERSION',"2.0");
+    define('KOUGUU_APP',"kouguu_fb_like");
+    define('KOUGUU_DESCRIPTIVE_NAME',"Facebook Like Button");
+    define('KOUGUU_ID', "kl");
     define('KOUGUU_APP_PATH',dirname( __FILE__ ).'/');
     define('KOUGUU_APP_URL',plugin_dir_url( __FILE__ ));
     define('KOUGUU_LIBRARY', dirname( __FILE__ )."/library/kouguu/" );
@@ -38,24 +40,37 @@ try {
     require_once KOUGUU_LIBRARY.'core.functions.php';
     require_once KOUGUU_LIBRARY.'form.class.php';
     require_once KOUGUU_LIBRARY.'view.class.php';
-    require_once 'kl_defaults.php';
+    require_once KOUGUU_ID.'_defaults.php';
     require_once KOUGUU_LIBRARY.'app.functions.php';
 
     if (KOUGUU_DEBUG) kouguu_log("Init ".KOUGUU_APP." ".KOUGUU_VERSION);
 
 // Hook for db install
-    /*require_once 'kl_install.php';
-    register_activation_hook(__FILE__,'kl_install');*/
+    /*require_once KOUGUU_ID.'_install.php';
+    register_activation_hook(__FILE__, KOUGUU_ID.'_install');*/
 
 // Hook for adding admin menus
-    require_once 'kl_admin_menu.php';
-    add_action('admin_menu', 'kl_add_pages');
+    require_once KOUGUU_ID.'_admin_menu.php';
+    add_action('admin_menu', KOUGUU_ID.'_add_pages');
 
-// Hook for display
-    add_filter('the_content', 'kl_render', 8);
+//Hook for adding meta-box
+    require_once KOUGUU_ID.'_meta_box.php';
+    add_action('admin_menu', 'kouguu_add_custom_box');
+    add_action('save_post', 'kouguu_save_custom_box');
+
+// Hook for button display
+    add_filter('the_content', 'fb_render_button', 8);
 
 // Hook for CSS
     kouguu_add_css();
+
+//Hook for fb_sdk
+    $kl_options=kouguu_get_option('kouguuLike_advanced');
+    if ($kl_options['use_xfbml']=="on" && is_numeric($kl_options['fb_app_id'])) {
+        add_filter('language_attributes', 'fb_add_schema');
+        if ($kl_options['fb_add_meta']=='on')add_action('wp_head','fb_add_meta');
+        add_action('wp_print_footer_scripts', 'fb_JavaScript_SDK');
+    }
 
 
 } catch (exception $e) {

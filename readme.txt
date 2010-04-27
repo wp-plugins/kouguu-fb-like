@@ -1,13 +1,20 @@
-=== Kouguu FB Like ===
+=== Kouguu Facebook Like ===
 Contributors: nzimmer
 Tags: facebook, social, like, button
 Requires at least: 2.9
 Tested up to: 2.9.2
 Stable tag: trunk
 
-Kouguu FB Like wraps the new Facebook Like Button plugin into a customizable WP plugin.
+Kouguu FB Like wraps the new Facebook Like Button plugin into a customizable WP plugin via iFrame or FBML.
 
 == Description ==
+
+Features:
+
+*   Use iFrame or FBML (with share/comment functionality)
+*   Displaying the Like Button is individualy settable on post/page level
+*   Add OpenGraph metatags to your blog
+*   View recent activies right on your admin pages
 
 Kouguu FB Like wraps the new *Facebook Like Button* plugin into a customizable WP plugin:
 
@@ -29,11 +36,23 @@ This section describes how to install the plugin and get it working.
 
 == Frequently Asked Questions ==
 
+= I have activated XFBML in the admin section but the Button isn't displayed. However iFrames work fine =
+
+Please make sure that the theme is supporting XHTML. Open the header.php file of your theme and check the html-tag which should look like:
+
+`<html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>`
+
+
 
 == Screenshots ==
 
 
 == Changelog ==
+
+= 2.0 =
+FBML support added
+Display option on page/post level added
+Recent Activities added
 
 = 1.0.1 =
 Separated CSS from code
