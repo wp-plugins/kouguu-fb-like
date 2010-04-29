@@ -5,7 +5,6 @@ class kouguu_form {
     public $name;
     public $action;
     public $class;
-    //protected $prepend;
     protected $headline;
     protected $introduction;
     protected $table_row;
@@ -139,7 +138,7 @@ class kouguu_form {
         $html.=implode("\n", $this->table_row);
         $html.="</table>";
         $html.="</$wrapper>";
-        if (!empty($this->buttons)) $html.="<$wrapper class=\"kouguu_submit\">".implode($this->buttons)."</$wrapper>";
+        if (!empty($this->buttons)) $html.="<$wrapper class=\"kouguu_submit\" style=\"padding-top:10px;\">".implode($this->buttons)."</$wrapper>";
         if (!empty ($this->response)) $html.=implode("\n",$this->response);
         $html.="</form>";
         return $html;

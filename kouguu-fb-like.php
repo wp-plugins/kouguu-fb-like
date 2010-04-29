@@ -3,7 +3,7 @@
 Plugin Name: Kouguu FB Like
 Plugin URI: http://www.kouguu.net
 Description: Kouguu Facebook Like Button Plugin
-Version: 2.0
+Version: 2.1
 Author: Nicolas Zimmer
 Author URI: http://www.kouguu.net
 */
@@ -27,13 +27,16 @@ try {
 
 // Constants
     define('KOUGUU_DEBUG',false);
-    define('KOUGUU_VERSION',"2.0");
+    define('KOUGUU_VERSION',"2.1");
     define('KOUGUU_APP',"kouguu_fb_like");
     define('KOUGUU_DESCRIPTIVE_NAME',"Facebook Like Button");
     define('KOUGUU_ID', "kl");
     define('KOUGUU_APP_PATH',dirname( __FILE__ ).'/');
     define('KOUGUU_APP_URL',plugin_dir_url( __FILE__ ));
     define('KOUGUU_LIBRARY', dirname( __FILE__ )."/library/kouguu/" );
+
+// Hook for language files
+    load_plugin_textdomain(KOUGUU_APP, false, dirname(plugin_basename(__FILE__)).'/language');
 
 // Includes
     global $wpdb;
@@ -42,12 +45,7 @@ try {
     require_once KOUGUU_LIBRARY.'view.class.php';
     require_once KOUGUU_ID.'_defaults.php';
     require_once KOUGUU_LIBRARY.'app.functions.php';
-
     if (KOUGUU_DEBUG) kouguu_log("Init ".KOUGUU_APP." ".KOUGUU_VERSION);
-
-// Hook for db install
-    /*require_once KOUGUU_ID.'_install.php';
-    register_activation_hook(__FILE__, KOUGUU_ID.'_install');*/
 
 // Hook for adding admin menus
     require_once KOUGUU_ID.'_admin_menu.php';
@@ -68,9 +66,15 @@ try {
     $kl_options=kouguu_get_option('kouguuLike_advanced');
     if ($kl_options['use_xfbml']=="on" && is_numeric($kl_options['fb_app_id'])) {
         add_filter('language_attributes', 'fb_add_schema');
-        if ($kl_options['fb_add_meta']=='on')add_action('wp_head','fb_add_meta');
+        if ($kl_options['fb_add_meta']=='on'){
+            add_filter('language_attributes', 'og_add_schema');
+            add_action('wp_head','fb_add_meta');
+        }
         add_action('wp_print_footer_scripts', 'fb_JavaScript_SDK');
     }
+
+//Hook for shortcode
+    add_shortcode('kouguu-fb-like', 'fb_shortcode_handler');
 
 
 } catch (exception $e) {

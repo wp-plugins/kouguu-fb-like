@@ -41,6 +41,10 @@ function fb_add_schema($content) {
     return $content.' xmlns:fb="http://www.facebook.com/2008/fbml"';
 }
 
+function og_add_schema($content) {
+    return $content.' xmlns:og="http://opengraphprotocol.org/schema/"';
+}
+
 function fb_add_meta() {
     $kl_options=kouguu_get_option('kouguuLike_advanced');
     foreach ($kl_options as $meta_property=>$meta_content) {
@@ -57,9 +61,9 @@ function fb_render_button($content) {
     global $post;
     $status=get_post_meta($post->ID,KOUGUU_APP.'_status',true);
     if ($status=="") $status="display";
-    if ($status!="display") return $content;
     $kl_options=kouguu_get_option('kouguuLike_main');
-    $href=urlencode(get_permalink($post->ID));
+    if ($status!="display" or $kl_options['position']=='shortcode') return $content;
+    $href=get_permalink($post->ID);
     $show_faces=($kl_options['show_faces']=='on')?'true':'false';
     $height=($show_faces=='true')?'65':'25';
     $kl_options_fbml=kouguu_get_option('kouguuLike_advanced');
@@ -69,4 +73,19 @@ function fb_render_button($content) {
     $content=($kl_options['position']=='prepend')?$button.$content:$content.$button;
     return $content;
 }
+
+function fb_shortcode_handler($args, $content = null) {
+    global $post;
+    $kl_options_fbml=kouguu_get_option('kouguuLike_advanced');
+    $params=kouguu_get_option(kouguuLike_main);
+    if ($params['position']!='shortcode') return;
+    $params['href']=urlencode(get_permalink($post->ID));
+    $params['use_xfbml']=$kl_options_fbml['use_xfbml'];
+    $params['fb_app_id']=$kl_options_fbml['fb_app_id'];
+    extract(shortcode_atts($params, $args));
+    $height=($show_faces=='true')?'65':'25';
+    $button=($use_xfmbl && is_numeric($fb_app_id))?fb_like_fbml($href, $layout, $show_faces, $width, $height, $action, $colorscheme):fb_like_iframe($href, $layout, $show_faces, $width, $height, $action, $colorscheme);
+    return $button;
+}
+
 ?>

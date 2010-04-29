@@ -10,7 +10,7 @@ function kouguu_log($message) {
 }
 
 function kouguu_get_message($messageHandle) {
-    $errorMessage = __("Invalid message handle","kl").": $messageHandle";
+    $errorMessage = __("Invalid message handle", KOUGUU_APP).": $messageHandle";
     $messageHandle=explode("_", $messageHandle);
     if (!is_array($messageHandle)) {
         $error=TRUE;
@@ -62,13 +62,13 @@ function kouguu_commit_updates($optiongroupHandle, &$kl_options) {
         //Restore Defaults if we are asked to
         if ($_POST['kouguu_default']) {
             $kl_options=kouguu_restore_default($optiongroupHandle, $kl_options);
-            $kl_message=__('Default values restored.','kl');
+            $kl_message=__('Default values restored.',KOUGUU_APP);
         } else {
             // Read the posted value using the default array keys
             foreach (array_keys($kl_options) as $kl_key) {
                 $kl_options[$kl_key]=htmlspecialchars($_POST[$kl_key]);
             }
-            $kl_message=__('Options updated.','kl');
+            $kl_message=__('Options updated.',KOUGUU_APP);
         }
         if (KOUGUU_DEBUG) kouguu_log($kl_message);
         // Save the posted value in the database
